@@ -182,8 +182,8 @@ function woocommerce_twocheckout(){
 
             <fieldset>
 
-            <input id="sellerId" type="hidden" maxlength="16" width="20" value="<? echo $this->seller_id ?>">
-            <input id="publishableKey" type="hidden" width="20" value="<? echo $this->publishable_key ?>">
+            <input id="sellerId" type="hidden" maxlength="16" width="20" value="<?php echo $this->seller_id ?>">
+            <input id="publishableKey" type="hidden" width="20" value="<?php echo $this->publishable_key ?>">
             <input id="token" name="token" type="hidden" value="">
 
             <!-- Credit card number -->
@@ -224,7 +224,7 @@ function woocommerce_twocheckout(){
             <!-- Credit card security code -->
             <p class="form-row">
             <label for="cvv"><?php _e( 'Card security code', 'woocommerce' ) ?> <span class="required">*</span></label>
-            <input type="text" class="input-text" id="cvv" maxlength="4" style="width:45px" />
+            <input type="text" class="input-text" id="cvv" maxlength="4" style="width:55px" />
             <span class="help"><?php _e( '3 or 4 digits usually found on the signature strip.', 'woocommerce' ) ?></span>
             </p>
 
@@ -233,12 +233,14 @@ function woocommerce_twocheckout(){
             </fieldset>
 
             <script type="text/javascript">
-                jQuery('#place_order').click(function(e) {
-                    e.preventDefault();
-                });
-                jQuery('#place_order').click(retrieveToken);
                 var myForm = document.getElementsByName('checkout')[0];
                 myForm.id = "tcoCCForm";
+                setTimeout(function(){
+                    jQuery('#place_order').click(function(e) {
+                        e.preventDefault();
+                    });
+                    jQuery('#place_order').click(retrieveToken);
+                },2000);
 
                 function successCallback(data) {
                     clearPaymentFields();
@@ -255,8 +257,16 @@ function woocommerce_twocheckout(){
                 }
 
                 function errorCallback(data) {
-                    clearPaymentFields();
-                    alert(data.errorMsg);
+                    if (data.errorCode === 200) {
+                        TCO.requestToken(successCallback, errorCallback, 'tcoCCForm');
+                    } else {
+                        clearPaymentFields();
+                        jQuery('#place_order').click(function(e) {
+                            e.preventDefault();
+                            retrieveToken();
+                        });
+                        alert(data.errorMsg);
+                    }
                 }
 
                 var retrieveToken = function () {
