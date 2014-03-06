@@ -189,7 +189,7 @@ function woocommerce_twocheckout(){
             <!-- Credit card number -->
             <p class="form-row form-row-first">
                 <label for="ccNo"><?php echo __( 'Credit Card number', 'woocommerce' ) ?> <span class="required">*</span></label>
-                <input type="text" class="input-text" id="ccNo" value="" />
+                <input type="text" class="input-text" id="ccNo" autocomplete="off" value="" />
 
             </p>
 
@@ -224,7 +224,7 @@ function woocommerce_twocheckout(){
             <!-- Credit card security code -->
             <p class="form-row">
             <label for="cvv"><?php _e( 'Card security code', 'woocommerce' ) ?> <span class="required">*</span></label>
-            <input type="text" class="input-text" id="cvv" maxlength="4" style="width:55px" />
+            <input type="text" class="input-text" id="cvv" autocomplete="off" maxlength="4" style="width:55px" />
             <span class="help"><?php _e( '3 or 4 digits usually found on the signature strip.', 'woocommerce' ) ?></span>
             </p>
 
@@ -235,12 +235,13 @@ function woocommerce_twocheckout(){
             <script type="text/javascript">
                 var myForm = document.getElementsByName('checkout')[0];
                 myForm.id = "tcoCCForm";
-                setTimeout(function(){
+                jQuery('#tcoCCForm').on("click", function(){
+                    jQuery('#place_order').unbind('click');
                     jQuery('#place_order').click(function(e) {
                         e.preventDefault();
+                        retrieveToken();
                     });
-                    jQuery('#place_order').click(retrieveToken);
-                },2000);
+                });
 
                 function successCallback(data) {
                     clearPaymentFields();
@@ -250,10 +251,6 @@ function woocommerce_twocheckout(){
                         return true;
                     });
                     jQuery('#place_order').click();
-                    jQuery('#place_order').click(retrieveToken);
-                    jQuery('#place_order').click(function(e) {
-                        e.preventDefault();
-                    });
                 }
 
                 function errorCallback(data) {
