@@ -288,10 +288,10 @@ function woocommerce_twocheckout(){
             </script>
 
             <?php if ($this->sandbox == 'yes'): ?>
-                <script type="text/javascript" src="https://sandbox.2checkout.com/checkout/api/script/publickey/"></script>
+                <script type="text/javascript" src="https://sandbox.2checkout.com/checkout/api/script/publickey/<?php echo $this->seller_id ?>"></script>
                 <script type="text/javascript" src="https://sandbox.2checkout.com/checkout/api/2co.js"></script>
             <?php else: ?>
-                <script type="text/javascript" src="https://www.2checkout.com/checkout/api/script/publickey/"></script>
+                <script type="text/javascript" src="https://www.2checkout.com/checkout/api/script/publickey/<?php echo $this->seller_id ?>"></script>
                 <script type="text/javascript" src="https://www.2checkout.com/checkout/api/2co.js"></script>
             <?php endif ?>
             <?php
