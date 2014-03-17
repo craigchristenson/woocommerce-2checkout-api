@@ -180,6 +180,10 @@ function woocommerce_twocheckout(){
                 </p><?php
             } ?>
 
+            <ul class="woocommerce-error" style="display:none" id="twocheckout_error_creditcard">
+            <li>Credit Card details are incorrect, please try again.</li>
+            </ul>
+
             <fieldset>
 
             <input id="sellerId" type="hidden" maxlength="16" width="20" value="<?php echo $this->seller_id ?>">
@@ -256,7 +260,15 @@ function woocommerce_twocheckout(){
                 function errorCallback(data) {
                     if (data.errorCode === 200) {
                         TCO.requestToken(successCallback, errorCallback, 'tcoCCForm');
-                    } else {
+                    } else if(data.errorCode == 401) {
+                        clearPaymentFields();
+                        jQuery('#place_order').click(function(e) {
+                            e.preventDefault();
+                            retrieveToken();
+                        });
+                        jQuery("#twocheckout_error_creditcard").show();
+                        
+                    } else{
                         clearPaymentFields();
                         jQuery('#place_order').click(function(e) {
                             e.preventDefault();
@@ -267,7 +279,9 @@ function woocommerce_twocheckout(){
                 }
 
                 var retrieveToken = function () {
+                    jQuery("#twocheckout_error_creditcard").hide();                    
                     if (jQuery('div.payment_method_twocheckout:first').css('display') === 'block') {
+                        jQuery('#ccNo').val(jQuery('#ccNo').val().replace(/[^0-9\.]+/g,''));
                         TCO.requestToken(successCallback, errorCallback, 'tcoCCForm');
                     } else {
                         jQuery('#place_order').unbind('click');
