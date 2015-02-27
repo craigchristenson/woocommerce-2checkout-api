@@ -369,7 +369,7 @@ function woocommerce_twocheckout(){
                     );
                 }
             } catch (Twocheckout_Error $e) {
-                $woocommerce->add_error(__('Payment error:', 'woothemes') . $e->getMessage());
+                wc_add_notice($e->getMessage(), $notice_type = 'error' );
                 return;
             }
         }
