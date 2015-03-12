@@ -209,7 +209,7 @@ function woocommerce_twocheckoutpp(){
                 $twocheckout_args_array[] = '<input type="hidden" name="'.esc_attr( $key ).'" value="'.esc_attr( $value ).'" />';
             }
 
-            $woocommerce->add_inline_js( '
+            wc_enqueue_js( '
 			jQuery("body").block({
 					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to PayPal to make payment.', 'woocommerce' ) ) . '",
 					baseZ: 99999,
