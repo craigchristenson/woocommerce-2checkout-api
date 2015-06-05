@@ -21,6 +21,11 @@ function woocommerce_twocheckoutpp(){
 		return;
 
     class WC_Gateway_Twocheckoutpp extends WC_Payment_Gateway{
+
+				// Logging
+				public static $log_enabled = false;
+				public static $log = false;
+
         public function __construct(){
 
             $plugin_dir = plugin_dir_url(__FILE__);
@@ -42,10 +47,7 @@ function woocommerce_twocheckoutpp(){
             $this->description = $this->get_option('description');
             $this->notify_url   = str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Gateway_Twocheckoutpp', home_url( '/' ) ) );
 
-            // Logs
-            if ($this->debug == 'yes'){
-                $this->log = $woocommerce->logger();
-            }
+						self::$log_enabled    = $this->debug;
 
             // Actions
             add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
@@ -60,6 +62,19 @@ function woocommerce_twocheckoutpp(){
                 $this->enabled = false;
             }
         }
+
+				/**
+				* Logging method
+				* @param  string $message
+				*/
+				public static function log( $message ) {
+					if ( self::$log_enabled ) {
+						if ( empty( self::$log ) ) {
+							self::$log = new WC_Logger();
+						}
+						self::$log->add( 'twocheckoutpp', $message );
+					}
+				}
 
         /**
          * Check if this gateway is enabled and available in the user's country
@@ -144,7 +159,14 @@ function woocommerce_twocheckoutpp(){
                     'default' => '',
                     'desc_tip'      => true,
                     'placeholder'	=> ''
-                )
+                ),
+								'debug' => array(
+									'title'       => __( 'Debug Log', 'woocommerce' ),
+									'type'        => 'checkbox',
+									'label'       => __( 'Enable logging', 'woocommerce' ),
+									'default'     => 'no',
+									'description' => sprintf( __( 'Log 2Checkout events', 'woocommerce' ), wc_get_log_file_path( 'twocheckoutpp' ) )
+								)
             );
 
         }

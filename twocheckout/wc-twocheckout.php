@@ -21,6 +21,11 @@ function woocommerce_twocheckout(){
 		return;
 
     class WC_Gateway_Twocheckout extends WC_Payment_Gateway{
+
+			  // Logging
+			  public static $log_enabled = false;
+			  public static $log = false;
+
         public function __construct(){
 
             $plugin_dir = plugin_dir_url(__FILE__);
@@ -43,10 +48,7 @@ function woocommerce_twocheckout(){
             $this->description = $this->get_option('description');
             $this->sandbox = $this->get_option('sandbox');
 
-            // Logs
-            if ($this->debug == 'yes'){
-                $this->log = $woocommerce->logger();
-            }
+						self::$log_enabled    = $this->debug;
 
             // Actions
             add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
@@ -61,6 +63,19 @@ function woocommerce_twocheckout(){
                 $this->enabled = false;
             }
         }
+
+				/**
+				* Logging method
+				* @param  string $message
+				*/
+				public static function log( $message ) {
+					if ( self::$log_enabled ) {
+						if ( empty( self::$log ) ) {
+							self::$log = new WC_Logger();
+						}
+						self::$log->add( 'twocheckout', $message );
+					}
+				}
 
         /**
          * Check if this gateway is enabled and available in the user's country
@@ -159,7 +174,14 @@ function woocommerce_twocheckout(){
                     'type' => 'checkbox',
                     'label' => __( 'Use 2Checkout Sandbox', 'woocommerce' ),
                     'default' => 'no'
-                )
+                ),
+								'debug' => array(
+									'title'       => __( 'Debug Log', 'woocommerce' ),
+									'type'        => 'checkbox',
+									'label'       => __( 'Enable logging', 'woocommerce' ),
+									'default'     => 'no',
+									'description' => sprintf( __( 'Log 2Checkout events', 'woocommerce' ), wc_get_log_file_path( 'twocheckout' ) )
+								)
             );
 
         }
@@ -242,7 +264,7 @@ function woocommerce_twocheckout(){
                 if(myForm) {
                     myForm.id = "tcoCCForm";
                     formName = "tcoCCForm";
-                } 
+                }
                 jQuery('#' + formName).on("click", function(){
                     jQuery('#place_order').unbind('click');
                     jQuery('#place_order').click(function(e) {
@@ -271,7 +293,7 @@ function woocommerce_twocheckout(){
                             retrieveToken();
                         });
                         jQuery("#twocheckout_error_creditcard").show();
-                        
+
                     } else{
                         clearPaymentFields();
                         jQuery('#place_order').click(function(e) {
@@ -283,7 +305,7 @@ function woocommerce_twocheckout(){
                 }
 
                 var retrieveToken = function () {
-                    jQuery("#twocheckout_error_creditcard").hide();                    
+                    jQuery("#twocheckout_error_creditcard").hide();
                     if (jQuery('div.payment_method_twocheckout:first').css('display') === 'block') {
                         jQuery('#ccNo').val(jQuery('#ccNo').val().replace(/[^0-9\.]+/g,''));
                         TCO.requestToken(successCallback, errorCallback, formName);
