@@ -3,7 +3,7 @@
   Plugin Name: 2Checkout PayPal Direct Gateway
   Plugin URI:
   Description: Allows you to use 2Checkout PayPal Direct payment method with the WooCommerce plugin.
-  Version: 0.0.1
+  Version: 0.0.2
   Author: Craig Christenson
   Author URI: https://www.2checkout.com
  */
@@ -15,16 +15,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 add_action('plugins_loaded', 'woocommerce_twocheckoutpp', 0);
 
 function woocommerce_twocheckoutpp(){
-	if (!class_exists('WC_Payment_Gateway'))
-		return; // if the WC payment gateway class is not available, do nothing
-	if(class_exists('WC_Twocheckoutpp'))
-		return;
+    if (!class_exists('WC_Payment_Gateway'))
+        return; // if the WC payment gateway class is not available, do nothing
+    if(class_exists('WC_Twocheckoutpp'))
+        return;
 
     class WC_Gateway_Twocheckoutpp extends WC_Payment_Gateway{
 
-				// Logging
-				public static $log_enabled = false;
-				public static $log = false;
+        // Logging
+        public static $log_enabled = false;
+        public static $log = false;
 
         public function __construct(){
 
@@ -46,8 +46,9 @@ function woocommerce_twocheckoutpp(){
             $this->secret_word = $this->get_option('secret_word');
             $this->description = $this->get_option('description');
             $this->notify_url   = str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Gateway_Twocheckoutpp', home_url( '/' ) ) );
+            $this->debug = $this->get_option('debug');
 
-						self::$log_enabled    = $this->debug;
+            self::$log_enabled = $this->debug;
 
             // Actions
             add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
@@ -63,18 +64,18 @@ function woocommerce_twocheckoutpp(){
             }
         }
 
-				/**
-				* Logging method
-				* @param  string $message
-				*/
-				public static function log( $message ) {
-					if ( self::$log_enabled ) {
-						if ( empty( self::$log ) ) {
-							self::$log = new WC_Logger();
-						}
-						self::$log->add( 'twocheckoutpp', $message );
-					}
-				}
+        /**
+        * Logging method
+        * @param  string $message
+        */
+        public static function log( $message ) {
+            if ( self::$log_enabled ) {
+                if ( empty( self::$log ) ) {
+                    self::$log = new WC_Logger();
+                }
+                self::$log->add( 'twocheckoutpp', $message );
+            }
+        }
 
         /**
          * Check if this gateway is enabled and available in the user's country
@@ -146,27 +147,27 @@ function woocommerce_twocheckoutpp(){
                 ),
                 'seller_id' => array(
                     'title' => __( 'Seller ID', 'woocommerce' ),
-                    'type' 			=> 'text',
+                    'type'          => 'text',
                     'description' => __( 'Please enter your 2Checkout account number.', 'woocommerce' ),
                     'default' => '',
                     'desc_tip'      => true,
-                    'placeholder'	=> ''
+                    'placeholder'   => ''
                 ),
                 'secret_word' => array(
                     'title' => __( 'Secret Word', 'woocommerce' ),
-                    'type' 			=> 'text',
+                    'type'          => 'text',
                     'description' => __( 'Please enter your 2Checkout Secret Word.', 'woocommerce' ),
                     'default' => '',
                     'desc_tip'      => true,
-                    'placeholder'	=> ''
+                    'placeholder'   => ''
                 ),
-								'debug' => array(
-									'title'       => __( 'Debug Log', 'woocommerce' ),
-									'type'        => 'checkbox',
-									'label'       => __( 'Enable logging', 'woocommerce' ),
-									'default'     => 'no',
-									'description' => sprintf( __( 'Log 2Checkout events', 'woocommerce' ), wc_get_log_file_path( 'twocheckoutpp' ) )
-								)
+                                'debug' => array(
+                                    'title'       => __( 'Debug Log', 'woocommerce' ),
+                                    'type'        => 'checkbox',
+                                    'label'       => __( 'Enable logging', 'woocommerce' ),
+                                    'default'     => 'no',
+                                    'description' => sprintf( __( 'Log 2Checkout events', 'woocommerce' ), wc_get_log_file_path( 'twocheckoutpp' ) )
+                                )
             );
 
         }
@@ -184,7 +185,7 @@ function woocommerce_twocheckoutpp(){
             $order_id = $order->id;
 
             if ( 'yes' == $this->debug )
-                $this->log->add( 'twocheckoutpp', 'Generating payment form for order ' . $order->get_order_number());
+                $this->log('Generating payment form for order ' . $order->get_order_number());
 
             $twocheckout_args = array();
 
@@ -196,13 +197,13 @@ function woocommerce_twocheckoutpp(){
             $twocheckout_args['return_url']         = $order->get_cancel_order_url();
             $twocheckout_args['x_receipt_link_url'] = $this->notify_url;
             $twocheckout_args['currency_code']      = get_woocommerce_currency();
-            $twocheckout_args['card_holder_name']	= $order->billing_first_name . ' ' . $order->billing_last_name;
-            $twocheckout_args['street_address']	    = $order->billing_address_1;
-            $twocheckout_args['street_address2']	= $order->billing_address_2;
-            $twocheckout_args['city']		        = $order->billing_city;
-            $twocheckout_args['state']		        = $order->billing_state;
-            $twocheckout_args['country']	        = $order->billing_country;
-            $twocheckout_args['zip']		        = $order->billing_postcode;
+            $twocheckout_args['card_holder_name']   = $order->billing_first_name . ' ' . $order->billing_last_name;
+            $twocheckout_args['street_address']     = $order->billing_address_1;
+            $twocheckout_args['street_address2']    = $order->billing_address_2;
+            $twocheckout_args['city']               = $order->billing_city;
+            $twocheckout_args['state']              = $order->billing_state;
+            $twocheckout_args['country']            = $order->billing_country;
+            $twocheckout_args['zip']                = $order->billing_postcode;
             $twocheckout_args['phone']              = $order->billing_phone;
             $twocheckout_args['email']              = $order->billing_email;
 
@@ -232,32 +233,32 @@ function woocommerce_twocheckoutpp(){
             }
 
             wc_enqueue_js( '
-			jQuery("body").block({
-					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to PayPal to make payment.', 'woocommerce' ) ) . '",
-					baseZ: 99999,
-					overlayCSS:
-					{
-						background: "#fff",
-						opacity: 0.6
-					},
-					css: {
-				        padding:        "20px",
-				        zindex:         "9999999",
-				        textAlign:      "center",
-				        color:          "#555",
-				        border:         "3px solid #aaa",
-				        backgroundColor:"#fff",
-				        cursor:         "wait",
-				        lineHeight:		"24px",
-				    }
-				});
-			jQuery("#submit_twocheckout_payment_form").click();
-		' );
+            jQuery("body").block({
+                    message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to PayPal to make payment.', 'woocommerce' ) ) . '",
+                    baseZ: 99999,
+                    overlayCSS:
+                    {
+                        background: "#fff",
+                        opacity: 0.6
+                    },
+                    css: {
+                        padding:        "20px",
+                        zindex:         "9999999",
+                        textAlign:      "center",
+                        color:          "#555",
+                        border:         "3px solid #aaa",
+                        backgroundColor:"#fff",
+                        cursor:         "wait",
+                        lineHeight:     "24px",
+                    }
+                });
+            jQuery("#submit_twocheckout_payment_form").click();
+        ' );
 
             return '<form action="https://www.2checkout.com/checkout/purchase" method="post" id="paypal_payment_form" target="_top">
-				' . implode( '', $twocheckout_args_array) . '
-				<input type="submit" class="button alt" id="submit_twocheckout_payment_form" value="' . __( 'Pay via PayPal', 'woocommerce' ) . '" /> <a class="button cancel" href="'.esc_url( $order->get_cancel_order_url() ).'">'.__( 'Cancel order &amp; restore cart', 'woocommerce' ).'</a>
-			</form>';
+                ' . implode( '', $twocheckout_args_array) . '
+                <input type="submit" class="button alt" id="submit_twocheckout_payment_form" value="' . __( 'Pay via PayPal', 'woocommerce' ) . '" /> <a class="button cancel" href="'.esc_url( $order->get_cancel_order_url() ).'">'.__( 'Cancel order &amp; restore cart', 'woocommerce' ).'</a>
+            </form>';
 
         }
 
@@ -274,11 +275,11 @@ function woocommerce_twocheckoutpp(){
             $order = new WC_Order($order_id);
 
             if ( 'yes' == $this->debug )
-                $this->log->add( 'twocheckoutpp', 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $this->notify_url );
+                $this->log( 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $this->notify_url );
 
             return array(
-                'result' 	=> 'success',
-                'redirect'	=> add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(woocommerce_get_page_id('pay' ))))
+                'result'    => 'success',
+                'redirect'  => add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(woocommerce_get_page_id('pay' ))))
             );
 
         }
@@ -307,7 +308,7 @@ function woocommerce_twocheckoutpp(){
             global $woocommerce;
             @ob_clean();
 
-            $wc_order_id 	= $_REQUEST['merchant_order_id'];
+            $wc_order_id    = $_REQUEST['merchant_order_id'];
 
             $compare_string = $this->secret_word . $this->seller_id . $_REQUEST['order_number'] . $_REQUEST['total'];
             $compare_hash1 = strtoupper(md5($compare_string));
@@ -315,7 +316,7 @@ function woocommerce_twocheckoutpp(){
             if ($compare_hash1 != $compare_hash2) {
                 wp_die( "2Checkout Hash Mismatch... check your secret word." );
             } else {
-                $wc_order 	= new WC_Order( absint( $wc_order_id ) );
+                $wc_order   = new WC_Order( absint( $wc_order_id ) );
 
                 // Mark order complete
                 $wc_order->payment_complete();

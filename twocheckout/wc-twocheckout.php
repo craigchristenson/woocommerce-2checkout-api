@@ -3,7 +3,7 @@
   Plugin Name: 2Checkout Payment Gateway
   Plugin URI:
   Description: Allows you to use 2Checkout payment gateway with the WooCommerce plugin.
-  Version: 0.0.1
+  Version: 0.0.2
   Author: Craig Christenson
   Author URI: https://www.2checkout.com
  */
@@ -15,16 +15,16 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 add_action('plugins_loaded', 'woocommerce_twocheckout', 0);
 
 function woocommerce_twocheckout(){
-	if (!class_exists('WC_Payment_Gateway'))
-		return; // if the WC payment gateway class is not available, do nothing
-	if(class_exists('WC_Twocheckout'))
-		return;
+    if (!class_exists('WC_Payment_Gateway'))
+        return; // if the WC payment gateway class is not available, do nothing
+    if(class_exists('WC_Twocheckout'))
+        return;
 
     class WC_Gateway_Twocheckout extends WC_Payment_Gateway{
 
-			  // Logging
-			  public static $log_enabled = false;
-			  public static $log = false;
+        // Logging
+        public static $log_enabled = false;
+        public static $log = false;
 
         public function __construct(){
 
@@ -47,8 +47,9 @@ function woocommerce_twocheckout(){
             $this->private_key = $this->get_option('private_key');
             $this->description = $this->get_option('description');
             $this->sandbox = $this->get_option('sandbox');
+            $this->debug = $this->get_option('debug');
 
-						self::$log_enabled    = $this->debug;
+            self::$log_enabled = $this->debug;
 
             // Actions
             add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
@@ -64,18 +65,18 @@ function woocommerce_twocheckout(){
             }
         }
 
-				/**
-				* Logging method
-				* @param  string $message
-				*/
-				public static function log( $message ) {
-					if ( self::$log_enabled ) {
-						if ( empty( self::$log ) ) {
-							self::$log = new WC_Logger();
-						}
-						self::$log->add( 'twocheckout', $message );
-					}
-				}
+        /**
+        * Logging method
+        * @param  string $message
+        */
+        public static function log( $message ) {
+            if ( self::$log_enabled ) {
+                if ( empty( self::$log ) ) {
+                    self::$log = new WC_Logger();
+                }
+                self::$log->add( 'twocheckout', $message );
+            }
+        }
 
         /**
          * Check if this gateway is enabled and available in the user's country
@@ -147,27 +148,27 @@ function woocommerce_twocheckout(){
                 ),
                 'seller_id' => array(
                     'title' => __( 'Seller ID', 'woocommerce' ),
-                    'type' 			=> 'text',
+                    'type'          => 'text',
                     'description' => __( 'Please enter your 2Checkout account number; this is needed in order to take payment.', 'woocommerce' ),
                     'default' => '',
                     'desc_tip'      => true,
-                    'placeholder'	=> ''
+                    'placeholder'   => ''
                 ),
                 'publishable_key' => array(
                     'title' => __( 'Publishable Key', 'woocommerce' ),
-                    'type' 			=> 'text',
+                    'type'          => 'text',
                     'description' => __( 'Please enter your 2Checkout Publishable Key; this is needed in order to take payment.', 'woocommerce' ),
                     'default' => '',
                     'desc_tip'      => true,
-                    'placeholder'	=> ''
+                    'placeholder'   => ''
                 ),
                 'private_key' => array(
                     'title' => __( 'Private Key', 'woocommerce' ),
-                    'type' 			=> 'text',
+                    'type'          => 'text',
                     'description' => __( 'Please enter your 2Checkout Private Key; this is needed in order to take payment.', 'woocommerce' ),
                     'default' => '',
                     'desc_tip'      => true,
-                    'placeholder'	=> ''
+                    'placeholder'   => ''
                 ),
                 'sandbox' => array(
                     'title' => __( 'Sandbox/Production', 'woocommerce' ),
@@ -175,13 +176,13 @@ function woocommerce_twocheckout(){
                     'label' => __( 'Use 2Checkout Sandbox', 'woocommerce' ),
                     'default' => 'no'
                 ),
-								'debug' => array(
-									'title'       => __( 'Debug Log', 'woocommerce' ),
-									'type'        => 'checkbox',
-									'label'       => __( 'Enable logging', 'woocommerce' ),
-									'default'     => 'no',
-									'description' => sprintf( __( 'Log 2Checkout events', 'woocommerce' ), wc_get_log_file_path( 'twocheckout' ) )
-								)
+                                'debug' => array(
+                                    'title'       => __( 'Debug Log', 'woocommerce' ),
+                                    'type'        => 'checkbox',
+                                    'label'       => __( 'Enable logging', 'woocommerce' ),
+                                    'default'     => 'no',
+                                    'description' => sprintf( __( 'Log 2Checkout events', 'woocommerce' ), wc_get_log_file_path( 'twocheckout' ) )
+                                )
             );
 
         }
@@ -350,7 +351,7 @@ function woocommerce_twocheckout(){
             $order = new WC_Order($order_id);
 
             if ( 'yes' == $this->debug )
-                $this->log->add( 'twocheckout', 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $this->notify_url );
+                $this->log( 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $this->notify_url );
 
             // 2Checkout Args
             $twocheckout_args = array(
