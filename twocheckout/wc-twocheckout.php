@@ -361,8 +361,8 @@ function woocommerce_twocheckout(){
             global $woocommerce;
             $order = new WC_Order($order_id);
 
-            if ( 'yes' == $this->debug )
-                $this->log( 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' );
+            if ( 'yes' == $this->debug && $this->notify_url !=='')
+                $this->log( 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: '. $this->notify_url );
 
             // 2Checkout Args
             $twocheckout_args = array(
