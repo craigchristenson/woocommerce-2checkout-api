@@ -359,11 +359,10 @@ function woocommerce_twocheckout(){
          */
         function process_payment( $order_id ) {
             global $woocommerce;
-
             $order = new WC_Order($order_id);
 
-            if ( 'yes' == $this->debug )
-                $this->log( 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $this->notify_url );
+            if ( 'yes' == $this->debug && $this->notify_url !=='')
+                $this->log( 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: '. $this->notify_url );
 
             // 2Checkout Args
             $twocheckout_args = array(
@@ -377,15 +376,15 @@ function woocommerce_twocheckout(){
 
                                     // Billing Address info
                                     "billingAddr" => array(
-                                        'name'          => $order->billing_first_name . ' ' . $order->billing_last_name,
-                                        'addrLine1'     => $order->billing_address_1,
-                                        'addrLine2'     => $order->billing_address_2,
-                                        'city'          => $order->billing_city,
-                                        'state'         => $order->billing_state,
-                                        'zipCode'       => $order->billing_postcode,
-                                        'country'       => $order->billing_country,
-                                        'email'         => $order->billing_email,
-                                        'phoneNumber'   => $order->billing_phone
+                                        'name'          => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
+                                        'addrLine1'     => $order->get_billing_address_1(),
+                                        'addrLine2'     => $order->get_billing_address_2(),
+                                        'city'          => $order->get_billing_city(),
+                                        'state'         => $order->get_billing_state(),
+                                        'zipCode'       => $order->get_billing_postcode(),
+                                        'country'       => $order->get_billing_country(),
+                                        'email'         => $order->get_billing_email(),
+                                        'phoneNumber'   => $order->get_billing_phone()
                                     )
                                 );
 
