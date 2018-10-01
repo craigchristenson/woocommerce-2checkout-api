@@ -3,7 +3,7 @@
   Plugin Name: 2Checkout Payment Gateway
   Plugin URI:
   Description: Allows you to use 2Checkout payment gateway with the WooCommerce plugin.
-  Version: 0.0.1
+  Version: 0.0.2
   Author: Craig Christenson
   Author URI: https://www.2checkout.com
  */
@@ -15,12 +15,17 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 add_action('plugins_loaded', 'woocommerce_twocheckout', 0);
 
 function woocommerce_twocheckout(){
-	if (!class_exists('WC_Payment_Gateway'))
-		return; // if the WC payment gateway class is not available, do nothing
-	if(class_exists('WC_Twocheckout'))
-		return;
+    if (!class_exists('WC_Payment_Gateway'))
+        return; // if the WC payment gateway class is not available, do nothing
+    if(class_exists('WC_Twocheckout'))
+        return;
 
     class WC_Gateway_Twocheckout extends WC_Payment_Gateway{
+
+        // Logging
+        public static $log_enabled = false;
+        public static $log = false;
+
         public function __construct(){
 
             $plugin_dir = plugin_dir_url(__FILE__);
@@ -42,11 +47,9 @@ function woocommerce_twocheckout(){
             $this->private_key = $this->get_option('private_key');
             $this->description = $this->get_option('description');
             $this->sandbox = $this->get_option('sandbox');
+            $this->debug = $this->get_option('debug');
 
-            // Logs
-            if ($this->debug == 'yes'){
-                $this->log = $woocommerce->logger();
-            }
+            self::$log_enabled = $this->debug;
 
             // Actions
             add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
@@ -63,13 +66,38 @@ function woocommerce_twocheckout(){
         }
 
         /**
+        * Logging method
+        * @param  string $message
+        */
+        public static function log( $message ) {
+            if ( self::$log_enabled ) {
+                if ( empty( self::$log ) ) {
+                    self::$log = new WC_Logger();
+                }
+                self::$log->add( 'twocheckout', $message );
+            }
+        }
+
+        /**
          * Check if this gateway is enabled and available in the user's country
          *
          * @access public
          * @return bool
          */
         function is_valid_for_use() {
-            if ( ! in_array( get_woocommerce_currency(), apply_filters( 'woocommerce_twocheckout_supported_currencies', array( 'AUD', 'AED', 'BRL', 'CAD', 'MXN', 'NZD', 'HKD', 'SGD', 'USD', 'EUR', 'JPY', 'TRY', 'NOK', 'DKK', 'ILS', 'MYR', 'PHP', 'SEK', 'CHF', 'GBP', 'ARS', 'INR', 'LTL', 'RON', 'RUB', 'ZAR' ) ) ) ) return false;
+          $supported_currencies = array(
+            'AFN', 'ALL', 'DZD', 'ARS', 'AUD', 'AZN', 'BSD', 'BDT', 'BBD',
+            'BZD', 'BMD', 'BOB', 'BWP', 'BRL', 'GBP', 'BND', 'BGN', 'CAD',
+            'CLP', 'CNY', 'COP', 'CRC', 'HRK', 'CZK', 'DKK', 'DOP', 'XCD',
+            'EGP', 'EUR', 'FJD', 'GTQ', 'HKD', 'HNL', 'HUF', 'INR', 'IDR',
+            'ILS', 'JMD', 'JPY', 'KZT', 'KES', 'LAK', 'MMK', 'LBP', 'LRD',
+            'MOP', 'MYR', 'MVR', 'MRO', 'MUR', 'MXN', 'MAD', 'NPR', 'TWD',
+            'NZD', 'NIO', 'NOK', 'PKR', 'PGK', 'PEN', 'PHP', 'PLN', 'QAR',
+            'RON', 'RUB', 'WST', 'SAR', 'SCR', 'SGF', 'SBD', 'ZAR', 'KRW',
+            'LKR', 'SEK', 'CHF', 'SYP', 'THB', 'TOP', 'TTD', 'TRY', 'UAH',
+            'AED', 'USD', 'VUV', 'VND', 'XOF', 'YER');
+
+            if ( ! in_array( get_woocommerce_currency(), apply_filters( 'woocommerce_twocheckout_supported_currencies', $supported_currencies ) ) ) return false;
 
             return true;
         }
@@ -132,34 +160,41 @@ function woocommerce_twocheckout(){
                 ),
                 'seller_id' => array(
                     'title' => __( 'Seller ID', 'woocommerce' ),
-                    'type' 			=> 'text',
+                    'type'          => 'text',
                     'description' => __( 'Please enter your 2Checkout account number; this is needed in order to take payment.', 'woocommerce' ),
                     'default' => '',
                     'desc_tip'      => true,
-                    'placeholder'	=> ''
+                    'placeholder'   => ''
                 ),
                 'publishable_key' => array(
                     'title' => __( 'Publishable Key', 'woocommerce' ),
-                    'type' 			=> 'text',
+                    'type'          => 'text',
                     'description' => __( 'Please enter your 2Checkout Publishable Key; this is needed in order to take payment.', 'woocommerce' ),
                     'default' => '',
                     'desc_tip'      => true,
-                    'placeholder'	=> ''
+                    'placeholder'   => ''
                 ),
                 'private_key' => array(
                     'title' => __( 'Private Key', 'woocommerce' ),
-                    'type' 			=> 'text',
+                    'type'          => 'text',
                     'description' => __( 'Please enter your 2Checkout Private Key; this is needed in order to take payment.', 'woocommerce' ),
                     'default' => '',
                     'desc_tip'      => true,
-                    'placeholder'	=> ''
+                    'placeholder'   => ''
                 ),
                 'sandbox' => array(
                     'title' => __( 'Sandbox/Production', 'woocommerce' ),
                     'type' => 'checkbox',
                     'label' => __( 'Use 2Checkout Sandbox', 'woocommerce' ),
                     'default' => 'no'
-                )
+                ),
+                                'debug' => array(
+                                    'title'       => __( 'Debug Log', 'woocommerce' ),
+                                    'type'        => 'checkbox',
+                                    'label'       => __( 'Enable logging', 'woocommerce' ),
+                                    'default'     => 'no',
+                                    'description' => sprintf( __( 'Log 2Checkout events', 'woocommerce' ), wc_get_log_file_path( 'twocheckout' ) )
+                                )
             );
 
         }
@@ -242,7 +277,7 @@ function woocommerce_twocheckout(){
                 if(myForm) {
                     myForm.id = "tcoCCForm";
                     formName = "tcoCCForm";
-                } 
+                }
                 jQuery('#' + formName).on("click", function(){
                     jQuery('#place_order').unbind('click');
                     jQuery('#place_order').click(function(e) {
@@ -271,7 +306,7 @@ function woocommerce_twocheckout(){
                             retrieveToken();
                         });
                         jQuery("#twocheckout_error_creditcard").show();
-                        
+
                     } else{
                         clearPaymentFields();
                         jQuery('#place_order').click(function(e) {
@@ -283,7 +318,7 @@ function woocommerce_twocheckout(){
                 }
 
                 var retrieveToken = function () {
-                    jQuery("#twocheckout_error_creditcard").hide();                    
+                    jQuery("#twocheckout_error_creditcard").hide();
                     if (jQuery('div.payment_method_twocheckout:first').css('display') === 'block') {
                         jQuery('#ccNo').val(jQuery('#ccNo').val().replace(/[^0-9\.]+/g,''));
                         TCO.requestToken(successCallback, errorCallback, formName);
@@ -328,7 +363,7 @@ function woocommerce_twocheckout(){
             $order = new WC_Order($order_id);
 
             if ( 'yes' == $this->debug )
-                $this->log->add( 'twocheckout', 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $this->notify_url );
+                $this->log( 'Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $this->notify_url );
 
             // 2Checkout Args
             $twocheckout_args = array(
@@ -369,7 +404,7 @@ function woocommerce_twocheckout(){
                     );
                 }
             } catch (Twocheckout_Error $e) {
-                $woocommerce->add_error(__('Payment error:', 'woothemes') . $e->getMessage());
+                wc_add_notice($e->getMessage(), $notice_type = 'error' );
                 return;
             }
         }
