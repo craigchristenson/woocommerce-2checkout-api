@@ -98,8 +98,8 @@ function woocommerce_twocheckoutpp(){
         public function admin_options() {
 
             ?>
-            <h3><?php _e( '2Checkout PayPal', 'woocommerce' ); ?></h3>
-            <p><?php _e( '2Checkout - Paypal', 'woocommerce' ); ?></p>
+            <h3><?php _e( '2Checkout PayPal', 'twocheckoutpp' ); ?></h3>
+            <p><?php _e( '2Checkout - Paypal', 'twocheckoutpp' ); ?></p>
 
             <?php if ( $this->is_valid_for_use() ) : ?>
 
@@ -111,7 +111,7 @@ function woocommerce_twocheckoutpp(){
                 </table><!--/.form-table-->
 
             <?php else : ?>
-                <div class="inline error"><p><strong><?php _e( 'Gateway Disabled', 'woocommerce' ); ?></strong>: <?php _e( '2Checkout does not support your store currency.', 'woocommerce' ); ?></p></div>
+                <div class="inline error"><p><strong><?php _e( 'Gateway Disabled', 'twocheckoutpp' ); ?></strong>: <?php _e( '2Checkout does not support your store currency.', 'twocheckoutpp' ); ?></p></div>
             <?php
             endif;
         }
@@ -127,46 +127,46 @@ function woocommerce_twocheckoutpp(){
 
             $this->form_fields = array(
                 'enabled' => array(
-                    'title' => __( 'Enable/Disable', 'woocommerce' ),
+                    'title' => __( 'Enable/Disable', 'twocheckoutpp' ),
                     'type' => 'checkbox',
-                    'label' => __( 'Enable 2Checkout PayPal', 'woocommerce' ),
+                    'label' => __( 'Enable 2Checkout PayPal', 'twocheckoutpp' ),
                     'default' => 'yes'
                 ),
                 'title' => array(
-                    'title' => __( 'Title', 'woocommerce' ),
+                    'title' => __( 'Title', 'twocheckoutpp' ),
                     'type' => 'text',
-                    'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce' ),
-                    'default' => __( 'PayPal', 'woocommerce' ),
+                    'description' => __( 'This controls the title which the user sees during checkout.', 'twocheckoutpp' ),
+                    'default' => __( 'PayPal', 'twocheckoutpp' ),
                     'desc_tip'      => true,
                 ),
                 'description' => array(
-                    'title' => __( 'Description', 'woocommerce' ),
+                    'title' => __( 'Description', 'twocheckoutpp' ),
                     'type' => 'textarea',
-                    'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce' ),
-                    'default' => __( 'Pay with PayPal', 'woocommerce' )
+                    'description' => __( 'This controls the description which the user sees during checkout.', 'twocheckoutpp' ),
+                    'default' => __( 'Pay with PayPal', 'twocheckoutpp' )
                 ),
                 'seller_id' => array(
-                    'title' => __( 'Seller ID', 'woocommerce' ),
+                    'title' => __( 'Seller ID', 'twocheckoutpp' ),
                     'type'          => 'text',
-                    'description' => __( 'Please enter your 2Checkout account number.', 'woocommerce' ),
+                    'description' => __( 'Please enter your 2Checkout account number.', 'twocheckoutpp' ),
                     'default' => '',
                     'desc_tip'      => true,
                     'placeholder'   => ''
                 ),
                 'secret_word' => array(
-                    'title' => __( 'Secret Word', 'woocommerce' ),
+                    'title' => __( 'Secret Word', 'twocheckoutpp' ),
                     'type'          => 'text',
-                    'description' => __( 'Please enter your 2Checkout Secret Word.', 'woocommerce' ),
+                    'description' => __( 'Please enter your 2Checkout Secret Word.', 'twocheckoutpp' ),
                     'default' => '',
                     'desc_tip'      => true,
                     'placeholder'   => ''
                 ),
                                 'debug' => array(
-                                    'title'       => __( 'Debug Log', 'woocommerce' ),
+                                    'title'       => __( 'Debug Log', 'twocheckoutpp' ),
                                     'type'        => 'checkbox',
-                                    'label'       => __( 'Enable logging', 'woocommerce' ),
+                                    'label'       => __( 'Enable logging', 'twocheckoutpp' ),
                                     'default'     => 'no',
-                                    'description' => sprintf( __( 'Log 2Checkout events', 'woocommerce' ), wc_get_log_file_path( 'twocheckoutpp' ) )
+                                    'description' => sprintf( __( 'Log 2Checkout events', 'twocheckoutpp' ), wc_get_log_file_path( 'twocheckoutpp' ) )
                                 )
             );
 
@@ -234,7 +234,7 @@ function woocommerce_twocheckoutpp(){
 
             wc_enqueue_js( '
             jQuery("body").block({
-                    message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to PayPal to make payment.', 'woocommerce' ) ) . '",
+                    message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to PayPal to make payment.', 'twocheckoutpp' ) ) . '",
                     baseZ: 99999,
                     overlayCSS:
                     {
@@ -257,7 +257,7 @@ function woocommerce_twocheckoutpp(){
 
             return '<form action="https://www.2checkout.com/checkout/purchase" method="post" id="paypal_payment_form" target="_top">
                 ' . implode( '', $twocheckout_args_array) . '
-                <input type="submit" class="button alt" id="submit_twocheckout_payment_form" value="' . __( 'Pay via PayPal', 'woocommerce' ) . '" /> <a class="button cancel" href="'.esc_url( $order->get_cancel_order_url() ).'">'.__( 'Cancel order &amp; restore cart', 'woocommerce' ).'</a>
+                <input type="submit" class="button alt" id="submit_twocheckout_payment_form" value="' . __( 'Pay via PayPal', 'twocheckoutpp' ) . '" /> <a class="button cancel" href="'.esc_url( $order->get_cancel_order_url() ).'">'.__( 'Cancel order &amp; restore cart', 'twocheckoutpp' ).'</a>
             </form>';
 
         }
@@ -292,7 +292,7 @@ function woocommerce_twocheckoutpp(){
          */
         function receipt_page( $order ) {
 
-            echo '<p>'.__( 'Thank you for your order, please click the button below to pay with PayPal.', 'woocommerce' ).'</p>';
+            echo '<p>'.__( 'Thank you for your order, please click the button below to pay with PayPal.', 'twocheckoutpp' ).'</p>';
 
             echo $this->generate_twocheckout_form( $order );
 
