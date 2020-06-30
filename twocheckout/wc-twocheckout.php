@@ -111,8 +111,8 @@ function woocommerce_twocheckout(){
         public function admin_options() {
 
             ?>
-            <h3><?php _e( '2Checkout', 'woocommerce' ); ?></h3>
-            <p><?php _e( '2Checkout - Credit Card/Paypal', 'woocommerce' ); ?></p>
+            <h3><?php _e( '2Checkout', 'twocheckout' ); ?></h3>
+            <p><?php _e( '2Checkout - Credit Card/Paypal', 'twocheckout' ); ?></p>
 
             <?php if ( $this->is_valid_for_use() ) : ?>
 
@@ -124,7 +124,7 @@ function woocommerce_twocheckout(){
                 </table><!--/.form-table-->
 
             <?php else : ?>
-                <div class="inline error"><p><strong><?php _e( 'Gateway Disabled', 'woocommerce' ); ?></strong>: <?php _e( '2Checkout does not support your store currency.', 'woocommerce' ); ?></p></div>
+                <div class="inline error"><p><strong><?php _e( 'Gateway Disabled', 'twocheckout' ); ?></strong>: <?php _e( '2Checkout does not support your store currency.', 'twocheckout' ); ?></p></div>
             <?php
             endif;
         }
@@ -140,60 +140,60 @@ function woocommerce_twocheckout(){
 
             $this->form_fields = array(
                 'enabled' => array(
-                    'title' => __( 'Enable/Disable', 'woocommerce' ),
+                    'title' => __( 'Enable/Disable', 'twocheckout' ),
                     'type' => 'checkbox',
-                    'label' => __( 'Enable 2Checkout', 'woocommerce' ),
+                    'label' => __( 'Enable 2Checkout', 'twocheckout' ),
                     'default' => 'yes'
                 ),
                 'title' => array(
-                    'title' => __( 'Title', 'woocommerce' ),
+                    'title' => __( 'Title', 'twocheckout' ),
                     'type' => 'text',
-                    'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce' ),
-                    'default' => __( 'Credit Card/PayPal', 'woocommerce' ),
+                    'description' => __( 'This controls the title which the user sees during checkout.', 'twocheckout' ),
+                    'default' => __( 'Credit Card/PayPal', 'twocheckout' ),
                     'desc_tip'      => true,
                 ),
                 'description' => array(
-                    'title' => __( 'Description', 'woocommerce' ),
+                    'title' => __( 'Description', 'twocheckout' ),
                     'type' => 'textarea',
-                    'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce' ),
-                    'default' => __( 'Pay with Credit Card/PayPal', 'woocommerce' )
+                    'description' => __( 'This controls the description which the user sees during checkout.', 'twocheckout' ),
+                    'default' => __( 'Pay with Credit Card/PayPal', 'twocheckout' )
                 ),
                 'seller_id' => array(
-                    'title' => __( 'Seller ID', 'woocommerce' ),
+                    'title' => __( 'Seller ID', 'twocheckout' ),
                     'type'          => 'text',
-                    'description' => __( 'Please enter your 2Checkout account number; this is needed in order to take payment.', 'woocommerce' ),
+                    'description' => __( 'Please enter your 2Checkout account number; this is needed in order to take payment.', 'twocheckout' ),
                     'default' => '',
                     'desc_tip'      => true,
                     'placeholder'   => ''
                 ),
                 'publishable_key' => array(
-                    'title' => __( 'Publishable Key', 'woocommerce' ),
+                    'title' => __( 'Publishable Key', 'twocheckout' ),
                     'type'          => 'text',
-                    'description' => __( 'Please enter your 2Checkout Publishable Key; this is needed in order to take payment.', 'woocommerce' ),
+                    'description' => __( 'Please enter your 2Checkout Publishable Key; this is needed in order to take payment.', 'twocheckout' ),
                     'default' => '',
                     'desc_tip'      => true,
                     'placeholder'   => ''
                 ),
                 'private_key' => array(
-                    'title' => __( 'Private Key', 'woocommerce' ),
+                    'title' => __( 'Private Key', 'twocheckout' ),
                     'type'          => 'text',
-                    'description' => __( 'Please enter your 2Checkout Private Key; this is needed in order to take payment.', 'woocommerce' ),
+                    'description' => __( 'Please enter your 2Checkout Private Key; this is needed in order to take payment.', 'twocheckout' ),
                     'default' => '',
                     'desc_tip'      => true,
                     'placeholder'   => ''
                 ),
                 'sandbox' => array(
-                    'title' => __( 'Sandbox/Production', 'woocommerce' ),
+                    'title' => __( 'Sandbox/Production', 'twocheckout' ),
                     'type' => 'checkbox',
-                    'label' => __( 'Use 2Checkout Sandbox', 'woocommerce' ),
+                    'label' => __( 'Use 2Checkout Sandbox', 'twocheckout' ),
                     'default' => 'no'
                 ),
                                 'debug' => array(
-                                    'title'       => __( 'Debug Log', 'woocommerce' ),
+                                    'title'       => __( 'Debug Log', 'twocheckout' ),
                                     'type'        => 'checkbox',
-                                    'label'       => __( 'Enable logging', 'woocommerce' ),
+                                    'label'       => __( 'Enable logging', 'twocheckout' ),
                                     'default'     => 'no',
-                                    'description' => sprintf( __( 'Log 2Checkout events', 'woocommerce' ), wc_get_log_file_path( 'twocheckout' ) )
+                                    'description' => sprintf( __( 'Log 2Checkout events', 'twocheckout' ), wc_get_log_file_path( 'twocheckout' ) )
                                 )
             );
 
@@ -227,7 +227,7 @@ function woocommerce_twocheckout(){
 
             <!-- Credit card number -->
             <p class="form-row form-row-first">
-                <label for="ccNo"><?php echo __( 'Credit Card number', 'woocommerce' ) ?> <span class="required">*</span></label>
+                <label for="ccNo"><?php echo __( 'Credit Card number', 'twocheckout' ) ?> <span class="required">*</span></label>
                 <input type="text" class="input-text" id="ccNo" autocomplete="off" value="" />
 
             </p>
@@ -236,9 +236,9 @@ function woocommerce_twocheckout(){
 
             <!-- Credit card expiration -->
             <p class="form-row form-row-first">
-                <label for="cc-expire-month"><?php echo __( 'Expiration date', 'woocommerce') ?> <span class="required">*</span></label>
+                <label for="cc-expire-month"><?php echo __( 'Expiration date', 'twocheckout') ?> <span class="required">*</span></label>
                 <select id="expMonth" class="woocommerce-select woocommerce-cc-month">
-                    <option value=""><?php _e( 'Month', 'woocommerce' ) ?></option><?php
+                    <option value=""><?php _e( 'Month', 'twocheckout' ) ?></option><?php
                     $months = array();
                     for ( $i = 1; $i <= 12; $i ++ ) {
                         $timestamp = mktime( 0, 0, 0, $i, 1 );
@@ -249,7 +249,7 @@ function woocommerce_twocheckout(){
                     } ?>
                 </select>
                 <select id="expYear" class="woocommerce-select woocommerce-cc-year">
-                    <option value=""><?php _e( 'Year', 'woocommerce' ) ?></option>
+                    <option value=""><?php _e( 'Year', 'twocheckout' ) ?></option>
                     <?php
                     $years = array();
                     for ( $i = date( 'y' ); $i <= date( 'y' ) + 15; $i ++ ) {
@@ -262,9 +262,9 @@ function woocommerce_twocheckout(){
 
             <!-- Credit card security code -->
             <p class="form-row">
-            <label for="cvv"><?php _e( 'Card security code', 'woocommerce' ) ?> <span class="required">*</span></label>
+            <label for="cvv"><?php _e( 'Card security code', 'twocheckout' ) ?> <span class="required">*</span></label>
             <input type="text" class="input-text" id="cvv" autocomplete="off" maxlength="4" style="width:55px" />
-            <span class="help"><?php _e( '3 or 4 digits usually found on the signature strip.', 'woocommerce' ) ?></span>
+            <span class="help"><?php _e( '3 or 4 digits usually found on the signature strip.', 'twocheckout' ) ?></span>
             </p>
 
             <div class="clear"></div>
